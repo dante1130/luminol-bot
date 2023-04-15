@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 use serenity::{
     framework::{
@@ -10,8 +10,10 @@ use serenity::{
         StandardFramework,
     },
     model::prelude::{Message, UserId},
-    prelude::Context,
+    prelude::{Context, TypeMapKey},
 };
+
+use async_openai::types::CreateCompletionRequestArgs;
 
 use rand::seq::SliceRandom;
 
@@ -19,10 +21,15 @@ use rand::seq::SliceRandom;
 #[commands(ping, ask)]
 struct General;
 
+#[group]
+#[commands(complete)]
+struct OpenAI;
+
 pub fn framework() -> StandardFramework {
     let framework = StandardFramework::new()
         .configure(|c| c.prefix("e!"))
         .group(&GENERAL_GROUP)
+        .group(&OPENAI_GROUP)
         .help(&HELP);
 
     framework
@@ -90,6 +97,36 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
             });
             m
         })
+        .await?;
+
+    Ok(())
+}
+
+pub struct OpenAIClient;
+
+impl TypeMapKey for OpenAIClient {
+    type Value = HashMap<u8, async_openai::Client>;
+}
+
+#[command]
+pub async fn complete(ctx: &Context, msg: &Message) -> CommandResult {
+    let prompt = msg.content.trim_start_matches("e!complete").trim();
+
+    let request = CreateCompletionRequestArgs::default()
+        .model("text-davinci-003")
+        .prompt(prompt)
+        .max_tokens(128_u16)
+        .build()
+        .unwrap();
+
+    let data = ctx.data.read().await;
+
+    let client = data.get::<OpenAIClient>().unwrap().get(&0).unwrap();
+
+    let response = client.completions().create(request).await.unwrap();
+
+    msg.channel_id
+        .say(&ctx.http, &response.choices.first().unwrap().text)
         .await?;
 
     Ok(())
