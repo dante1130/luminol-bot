@@ -14,7 +14,7 @@ use serenity::{
 };
 
 #[group]
-#[commands(ping)]
+#[commands(ping, ask)]
 struct General;
 
 pub fn framework() -> StandardFramework {
@@ -42,6 +42,28 @@ pub async fn help(
 #[command]
 pub async fn ping(ctx: &Context, msg: &Message) -> CommandResult {
     msg.channel_id.say(&ctx.http, "pong!").await?;
+
+    Ok(())
+}
+
+#[command]
+pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
+    let prepend_response = "So, to scientically analyze the data available so far, ";
+
+    let question = msg.content.trim_start_matches("e!ask").trim();
+
+    msg.channel_id
+        .send_files(&ctx.http, vec!["res/DS.gif"], |m| {
+            m.embed(|e| {
+                e.title(question);
+                e.description(prepend_response);
+                e.color(0xF6DBD8);
+                e.attachment("DS.gif");
+                e
+            });
+            m
+        })
+        .await?;
 
     Ok(())
 }
