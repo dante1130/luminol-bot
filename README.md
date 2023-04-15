@@ -2,11 +2,7 @@
 
 LuminolBot is a Discord bot that provides a variety of commands for the Luminol server. The previous bot was written in JavaScript and was stuck in dependency hell. This bot is written in Rust and uses the [serenity](https://github.com/serenity-rs/serenity) library.
 
-The commands are invoked by prefixing the command with `e!`.
-
-Here is a list of the commands:
-
-- `ping` - Returns the message "Pong!". This is mostly to test the bot's latency.
+The commands are invoked by prefixing the command with `e!`. You can see the list of commands by typing `e!help`.
 
 ## Table of Contents
 
