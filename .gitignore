@@ -3,6 +3,8 @@
 debug/
 target/
 
+private/
+
 Cargo.lock
 
 **/*.rs.bk

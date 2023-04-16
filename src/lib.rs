@@ -8,7 +8,10 @@ use serenity::{
 pub mod commands;
 pub mod handler;
 
-use commands::{general::ask::*, general::ping::*, help::*, openai::chat::*, openai::complete::*};
+use commands::{
+    general::ask::*, general::ping::*, help::*, openai::chat::*, openai::complete::*,
+    openai::image::*,
+};
 
 pub struct OpenAIClient;
 
@@ -21,7 +24,7 @@ impl TypeMapKey for OpenAIClient {
 struct General;
 
 #[group]
-#[commands(complete, chat)]
+#[commands(complete, chat, image)]
 struct OpenAI;
 
 pub fn framework() -> StandardFramework {
