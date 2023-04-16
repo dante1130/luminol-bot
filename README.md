@@ -25,8 +25,9 @@ It is recommended that you use `rustup` to manage your Rust installation.
 
 You will need a `.env` file in the root directory of the project. This file should contain the following variables:
 
-```bash
+```env
 DISCORD_TOKEN=<your discord bot token>
+OPENAI_API_KEY=<your openai api key>
 ```
 
 ### Building and running
