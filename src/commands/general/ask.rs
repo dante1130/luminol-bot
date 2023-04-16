@@ -6,6 +6,8 @@ use serenity::{
 };
 
 #[command]
+#[description("Ask Ema a question and she will answer it!")]
+#[usage("<question>")]
 pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
     let prepend_response = "So, to scientically analyze the data available so far, ";
 

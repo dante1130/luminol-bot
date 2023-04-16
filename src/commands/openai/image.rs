@@ -8,6 +8,8 @@ use serenity::{
 use crate::OpenAIClient;
 
 #[command]
+#[description("Generate an image with OpenAI's DALL·E API.")]
+#[usage("<prompt>")]
 pub async fn image(ctx: &Context, msg: &Message) -> CommandResult {
     let prompt = msg.content.trim_start_matches("e!image").trim();
 

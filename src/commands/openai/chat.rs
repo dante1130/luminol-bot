@@ -8,6 +8,8 @@ use serenity::{
 use crate::OpenAIClient;
 
 #[command]
+#[description("Chat with OpenAI's GPT-3.5 API.")]
+#[usage("<prompt>")]
 pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
     let prompt = msg.content.trim_start_matches("e!chat").trim();
 

@@ -8,6 +8,8 @@ use serenity::{
 use crate::OpenAIClient;
 
 #[command]
+#[description("Complete a prompt with OpenAI's GPT-3 API.")]
+#[usage("<prompt>")]
 pub async fn complete(ctx: &Context, msg: &Message) -> CommandResult {
     let prompt = msg.content.trim_start_matches("e!complete").trim();
 

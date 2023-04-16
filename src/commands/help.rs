@@ -9,6 +9,10 @@ use serenity::{
 };
 
 #[help]
+#[individual_command_tip = "Hello! I'm Ema, the Luminol bot. 
+                            You can use `e!help` to get a list of all commands, 
+                            or `e!help <command>` to get more information about a specific command."]
+#[command_not_found_text = "Could not find: `{}`."]
 pub async fn help(
     context: &Context,
     msg: &Message,
