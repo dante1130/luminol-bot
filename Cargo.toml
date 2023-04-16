@@ -2,6 +2,8 @@
 name = "luminol_bot"
 version = "0.1.0"
 edition = "2021"
+description = "LuminolBot is a Discord bot that provides a variety of commands."
+license = "MIT"
 
 [dependencies]
 async-openai = "0.10.3"
