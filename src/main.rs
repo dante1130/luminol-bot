@@ -2,7 +2,6 @@ use std::collections::HashMap;
 
 use dotenv::dotenv;
 
-use luminol_bot::commands::OpenAIClient;
 use serenity::prelude::*;
 
 #[tokio::main]
@@ -17,8 +16,11 @@ async fn main() {
 
     let mut client = Client::builder(&discord_token, intents)
         .event_handler(luminol_bot::handler::Handler)
-        .framework(luminol_bot::commands::framework())
-        .type_map_insert::<OpenAIClient>(HashMap::from([(0, async_openai::Client::new())]))
+        .framework(luminol_bot::framework())
+        .type_map_insert::<luminol_bot::OpenAIClient>(HashMap::from([(
+            0,
+            async_openai::Client::new(),
+        )]))
         .await
         .expect("Err creating client");
 
