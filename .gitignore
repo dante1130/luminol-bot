@@ -6,9 +6,8 @@ target/
 private/
 
 Cargo.lock
+Secrets.toml
 
 **/*.rs.bk
 
 *.pdb
-
-.env

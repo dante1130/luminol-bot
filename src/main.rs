@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
-use shuttle_secrets::SecretStore;
+use anyhow::anyhow;
 
-use dotenv::dotenv;
+use shuttle_secrets::SecretStore;
 
 use serenity::prelude::*;
 
@@ -10,9 +10,17 @@ use serenity::prelude::*;
 async fn serenity(
     #[shuttle_secrets::Secrets] secret_store: SecretStore,
 ) -> shuttle_serenity::ShuttleSerenity {
-    dotenv().ok();
-    let discord_token =
-        std::env::var("DISCORD_TOKEN").expect("Expected DISCORD_TOKEN in the environment");
+    let discord_token = if let Some(token) = secret_store.get("DISCORD_TOKEN") {
+        token
+    } else {
+        return Err(anyhow!("'DISCORD_TOKEN' was not found").into());
+    };
+
+    let openai_api_key = if let Some(token) = secret_store.get("OPENAI_API_KEY") {
+        token
+    } else {
+        return Err(anyhow!("'OPENAI_API_KEY' was not found").into());
+    };
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
@@ -23,7 +31,7 @@ async fn serenity(
         .framework(luminol_bot::framework())
         .type_map_insert::<luminol_bot::OpenAIClient>(HashMap::from([(
             0,
-            async_openai::Client::new(),
+            async_openai::Client::new().with_api_key(openai_api_key),
         )]))
         .await
         .expect("Err creating client");

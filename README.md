@@ -10,8 +10,9 @@ The commands are invoked by prefixing the command with `e!`. You can see the lis
   - [Table of Contents](#table-of-contents)
   - [Deploying the bot](#deploying-the-bot)
     - [Prerequisites](#prerequisites)
-    - [Environment variables](#environment-variables)
+    - [Secrets](#secrets)
     - [Building and running](#building-and-running)
+    - [Deploying to Shuttle](#deploying-to-shuttle)
 
 ## Deploying the bot
 
@@ -21,9 +22,9 @@ You will need to install `Rust` and `cargo`. You can do this by following the in
 
 It is recommended that you use `rustup` to manage your Rust installation.
 
-### Environment variables
+### Secrets
 
-You will need a `.env` file in the root directory of the project. This file should contain the following variables:
+You will need a `Secrets.toml` file in the root directory of the project. This file should contain the following variables:
 
 ```env
 DISCORD_TOKEN=<your discord bot token>
@@ -33,6 +34,11 @@ OPENAI_API_KEY=<your openai api key>
 ### Building and running
 
 ```bash
-cargo build --release
-cargo run --release
+cargo shuttle run
+```
+
+### Deploying to Shuttle
+
+```bash
+cargo shuttle deploy
 ```
