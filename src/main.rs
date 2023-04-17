@@ -1,11 +1,15 @@
 use std::collections::HashMap;
 
+use shuttle_secrets::SecretStore;
+
 use dotenv::dotenv;
 
 use serenity::prelude::*;
 
-#[tokio::main]
-async fn main() {
+#[shuttle_runtime::main]
+async fn serenity(
+    #[shuttle_secrets::Secrets] secret_store: SecretStore,
+) -> shuttle_serenity::ShuttleSerenity {
     dotenv().ok();
     let discord_token =
         std::env::var("DISCORD_TOKEN").expect("Expected DISCORD_TOKEN in the environment");
@@ -27,4 +31,6 @@ async fn main() {
     if let Err(why) = client.start().await {
         println!("Client error: {:?}", why);
     }
+
+    Ok(client.into())
 }

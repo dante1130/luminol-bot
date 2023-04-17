@@ -1,15 +1,21 @@
 [package]
-name = "luminol_bot"
+name = "luminol-bot"
 version = "0.1.0"
 edition = "2021"
 authors = ["Andrew Ho"]
 description = "LuminolBot is a Discord bot that provides a variety of commands."
 license = "MIT"
 copyright = "2023 Andrew Ho"
+publish = false
 
 [dependencies]
 async-openai = "0.10.3"
 dotenv = "0.15.0"
 rand = "0.8.5"
 serenity = { version = "0.11.5", default-features = false, features = ["client", "gateway", "rustls_backend", "model", "framework", "standard_framework", "http", "cache"] }
-tokio = { version = "1.27.0", features = ["macros", "rt-multi-thread"] }
+tokio = "1.27.0"
+shuttle-runtime = "0.14.0"
+anyhow = "1.0.70"
+shuttle-secrets = "0.14.0"
+shuttle-serenity = "0.14.0"
+tracing = "0.1.37"
