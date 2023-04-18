@@ -26,7 +26,7 @@ async fn serenity(
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
-    let mut client = Client::builder(&discord_token, intents)
+    let client = Client::builder(&discord_token, intents)
         .event_handler(luminol_bot::handler::Handler)
         .framework(luminol_bot::framework())
         .type_map_insert::<luminol_bot::OpenAIClient>(HashMap::from([(
@@ -35,10 +35,6 @@ async fn serenity(
         )]))
         .await
         .expect("Err creating client");
-
-    if let Err(why) = client.start().await {
-        println!("Client error: {:?}", why);
-    }
 
     Ok(client.into())
 }
