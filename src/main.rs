@@ -33,6 +33,7 @@ async fn serenity(
             0,
             async_openai::Client::new().with_api_key(openai_api_key),
         )]))
+        .type_map_insert::<luminol_bot::Bagels>(HashMap::from([(0, HashMap::new())]))
         .await
         .expect("Err creating client");
 
