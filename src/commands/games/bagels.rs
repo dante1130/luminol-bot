@@ -18,56 +18,46 @@ pub async fn bagels(ctx: &Context, msg: &Message) -> CommandResult {
 
     if args == "new" {
         bagels_game_map.insert(msg.author.id, BagelsGameState::new(3));
-        msg.channel_id
-            .say(
-                &ctx.http,
-                "Started a new game of bagels! Guess by using `e!bagels <number>`.",
-            )
-            .await?;
+        msg.reply(
+            &ctx.http,
+            "Started a new game of bagels! Guess by using `e!bagels <number>`.",
+        )
+        .await?;
     } else if bagels_game_map.contains_key(&msg.author.id) {
         let game = bagels_game_map.get_mut(&msg.author.id).unwrap();
-        let guess_result = args.parse::<u32>();
-        let guess = match guess_result {
-            Ok(guess) => guess,
-            Err(_) => {
-                msg.channel_id
-                    .say(&ctx.http, "Your guess must be a number!")
-                    .await?;
+
+        let guess_result = game.guess(args.to_owned());
+        let result = match guess_result {
+            Ok(result) => result,
+            Err(err) => {
+                msg.reply(&ctx.http, err).await?;
                 return Ok(());
             }
         };
 
-        let result = game.guess(guess);
-
         match game.get_state() {
             BagelsState::Won => {
-                msg.channel_id
-                    .say(
-                        &ctx.http,
-                        format!("You won! The number was {}.", game.get_secret()),
-                    )
-                    .await?;
+                msg.reply(
+                    &ctx.http,
+                    format!("You won! The number was {}.", game.get_secret()),
+                )
+                .await?;
                 bagels_game_map.remove(&msg.author.id);
             }
             BagelsState::Lost => {
-                msg.channel_id
-                    .say(
-                        &ctx.http,
-                        format!("You lost! The number was {}.", game.get_secret()),
-                    )
-                    .await?;
+                msg.reply(
+                    &ctx.http,
+                    format!("You lost! The number was {}.", game.get_secret()),
+                )
+                .await?;
                 bagels_game_map.remove(&msg.author.id);
             }
             _ => {
-                msg.channel_id
-                    .say(&ctx.http, format!("{}", result.unwrap()))
-                    .await?;
+                msg.reply(&ctx.http, format!("{}", result)).await?;
             }
         }
     } else {
-        msg.channel_id
-            .say(&ctx.http, "You must start a game first!")
-            .await?;
+        msg.reply(&ctx.http, "You must start a game first!").await?;
     }
 
     Ok(())

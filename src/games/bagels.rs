@@ -61,7 +61,7 @@ impl BagelsGameState {
         }
     }
 
-    pub fn guess(self: &mut Self, guess: u32) -> Result<BagelsResult, String> {
+    pub fn guess(self: &mut Self, guess: String) -> Result<BagelsResult, String> {
         match self.state {
             BagelsState::Won => {
                 return Err("You already won!".to_string());
@@ -72,18 +72,30 @@ impl BagelsGameState {
             _ => {}
         }
 
-        let guess_vec = guess
-            .to_string()
-            .chars()
-            .map(|c| c.to_digit(10).unwrap())
-            .collect::<Vec<u32>>();
-
-        if guess_vec.len() != self.secret.len() {
+        if guess.len() != self.secret.len() {
             return Err(format!(
                 "Guess must be {} digits long, got {}",
                 self.secret.len(),
-                guess_vec.len()
+                guess.len()
             ));
+        }
+
+        // Check for duplicates
+        let mut guess_vec = Vec::with_capacity(guess.len());
+        for digit in guess.chars() {
+            let digit = digit.to_digit(10);
+            match digit {
+                Some(digit) => {
+                    if guess_vec.contains(&digit) {
+                        return Err("Guess must not contain duplicate digits!".to_string());
+                    } else {
+                        guess_vec.push(digit);
+                    }
+                }
+                None => {
+                    return Err("Guess must only contain digits!".to_string());
+                }
+            }
         }
 
         let mut fermi = 0;
