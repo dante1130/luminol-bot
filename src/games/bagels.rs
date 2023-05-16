@@ -42,7 +42,10 @@ impl std::fmt::Display for BagelsResult {
 
 impl BagelsGameState {
     pub fn new(digits: usize) -> Self {
-        let clamped_digits = digits.clamp(3, 10);
+        const MIN_DIGITS: usize = 3;
+        const MAX_DIGITS: usize = 5;
+
+        let clamped_digits = digits.clamp(MIN_DIGITS, MAX_DIGITS);
 
         let mut secret = Vec::with_capacity(digits);
         let mut rng = rand::thread_rng();

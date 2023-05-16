@@ -7,23 +7,54 @@ use serenity::{
 use crate::{games::bagels::*, Bagels};
 
 #[command]
-#[description("Play a game of bagels!")]
-#[usage("new")]
-#[usage("<guess>")]
+#[description(
+    "Play a game of bagels!
+     Pico = 1 digit correct.
+     Fermi = 1 digit correct and in the right place.
+     Bagels = no digits correct.
+     You can specify the number of digits with `e!bagels new <number>`.
+     The default and the minimum is 3 digits, and the maximum is 5 digits."
+)]
+#[usage("<number>")]
+#[example("new")]
+#[example("new 4")]
+#[example("123")]
+#[min_args(1)]
+#[max_args(2)]
 pub async fn bagels(ctx: &Context, msg: &Message) -> CommandResult {
     let args = msg.content.trim_start_matches("e!bagels").trim();
+    let args_vec = args.split(' ').collect::<Vec<&str>>();
 
     let mut data = ctx.data.write().await;
     let bagels_game_map = data.get_mut::<Bagels>().unwrap().get_mut(&0).unwrap();
 
-    if args == "new" {
-        bagels_game_map.insert(msg.author.id, BagelsGameState::new(3));
+    if args_vec[0] == "new" {
+        if bagels_game_map.contains_key(&msg.author.id) {
+            msg.reply(&ctx.http, "You already have a game running!")
+                .await?;
+            return Ok(());
+        }
+
+        let digits = if args_vec.len() > 1 {
+            match args_vec[1].parse::<usize>() {
+                Ok(digits) => digits,
+                Err(_) => 3,
+            }
+        } else {
+            3
+        };
+
+        bagels_game_map.insert(msg.author.id, BagelsGameState::new(digits));
         msg.reply(
             &ctx.http,
             "Started a new game of bagels! Guess by using `e!bagels <number>`.",
         )
         .await?;
-    } else if bagels_game_map.contains_key(&msg.author.id) {
+
+        return Ok(());
+    }
+
+    if bagels_game_map.contains_key(&msg.author.id) {
         let game = bagels_game_map.get_mut(&msg.author.id).unwrap();
 
         let guess_result = game.guess(args.to_owned());
@@ -57,7 +88,11 @@ pub async fn bagels(ctx: &Context, msg: &Message) -> CommandResult {
             }
         }
     } else {
-        msg.reply(&ctx.http, "You must start a game first!").await?;
+        msg.reply(
+            &ctx.http,
+            "You must start a game first! Use the command `e!bagels new`.",
+        )
+        .await?;
     }
 
     Ok(())
