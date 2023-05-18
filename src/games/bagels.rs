@@ -47,7 +47,7 @@ impl BagelsGameState {
 
         let clamped_digits = digits.clamp(MIN_DIGITS, MAX_DIGITS);
 
-        let mut secret = Vec::with_capacity(digits);
+        let mut secret = Vec::with_capacity(clamped_digits);
         let mut rng = rand::thread_rng();
         while secret.len() < clamped_digits {
             let digit = rng.gen_range(0..10);
