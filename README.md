@@ -1,6 +1,6 @@
 # luminol-bot
 
-LuminolBot is a Discord bot that provides a variety of commands for the Luminol server. The previous bot was written in JavaScript and was stuck in dependency hell. This bot is written in Rust and uses the [serenity](https://github.com/serenity-rs/serenity) library.
+LuminolBot is a Discord bot that provides a variety of features such as asking the bot any questions you want, games and making calls to the OpenAI API. The previous bot was written in JavaScript and was stuck in dependency hell. This bot is written in Rust and uses the [serenity](https://github.com/serenity-rs/serenity) library.
 
 The commands are invoked by prefixing the command with `e!`. You can see the list of commands by typing `e!help`.
 
