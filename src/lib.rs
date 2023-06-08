@@ -7,7 +7,6 @@ use serenity::{
 };
 
 pub mod commands;
-pub mod general;
 pub mod games;
 pub mod handler;
 
