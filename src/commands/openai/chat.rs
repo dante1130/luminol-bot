@@ -37,7 +37,7 @@ pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
                 ChatCompletionRequestMessage {
                     role: Role::User,
                     content: prompt.to_owned(),
-                    name: Some(msg.author.name.to_owned().replace(" ", "_")),
+                    name: Some(msg.author.name.to_owned().replace(' ', "_")),
                 }
             },
         ])

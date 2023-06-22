@@ -40,12 +40,10 @@ struct Games;
 struct OpenAI;
 
 pub fn framework() -> StandardFramework {
-    let framework = StandardFramework::new()
+    StandardFramework::new()
         .configure(|c| c.prefix("e!"))
         .group(&GENERAL_GROUP)
         .group(&GAMES_GROUP)
         .group(&OPENAI_GROUP)
-        .help(&HELP);
-
-    framework
+        .help(&HELP)
 }

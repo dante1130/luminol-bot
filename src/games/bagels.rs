@@ -64,7 +64,7 @@ impl BagelsGameState {
         }
     }
 
-    pub fn guess(self: &mut Self, guess: String) -> Result<BagelsResult, String> {
+    pub fn guess(&mut self, guess: String) -> Result<BagelsResult, String> {
         match self.state {
             BagelsState::Won => {
                 return Err("You already won!".to_string());
@@ -136,16 +136,16 @@ impl BagelsGameState {
         Ok(result)
     }
 
-    pub fn get_secret(self: &Self) -> u32 {
+    pub fn get_secret(&self) -> u32 {
         let mut secret = 0;
         for digit in &self.secret {
             secret *= 10;
-            secret += *digit as u32;
+            secret += *digit;
         }
         secret
     }
 
-    pub fn get_state(self: &Self) -> &BagelsState {
+    pub fn get_state(&self) -> &BagelsState {
         &self.state
     }
 }

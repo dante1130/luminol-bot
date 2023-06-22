@@ -36,10 +36,7 @@ pub async fn bagels(ctx: &Context, msg: &Message) -> CommandResult {
         }
 
         let digits = if args_vec.len() > 1 {
-            match args_vec[1].parse::<usize>() {
-                Ok(digits) => digits,
-                Err(_) => 3,
-            }
+            args_vec[1].parse::<usize>().unwrap_or(3)
         } else {
             3
         };
