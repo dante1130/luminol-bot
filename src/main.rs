@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use anyhow::anyhow;
 
+use async_openai::config::OpenAIConfig;
 use shuttle_secrets::SecretStore;
 
 use serenity::prelude::*;
@@ -26,12 +27,14 @@ async fn serenity(
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;
 
-    let client = Client::builder(&discord_token, intents)
+    let openai_config = OpenAIConfig::new().with_api_key(openai_api_key);
+
+    let client = serenity::client::Client::builder(&discord_token, intents)
         .event_handler(luminol_bot::handler::Handler)
         .framework(luminol_bot::framework())
         .type_map_insert::<luminol_bot::OpenAIClient>(HashMap::from([(
             0,
-            async_openai::Client::new().with_api_key(openai_api_key),
+            async_openai::Client::with_config(openai_config),
         )]))
         .type_map_insert::<luminol_bot::Bagels>(HashMap::from([(0, HashMap::new())]))
         .await

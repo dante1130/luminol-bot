@@ -11,8 +11,6 @@ use serenity::{
 pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
     let prepend_response = "So, to scientically analyze the data available so far, ";
 
-    let question = msg.content.trim_start_matches("e!ask").trim();
-
     let responses = vec![
         "as I see it, yes.",
         "ask again later.",
@@ -36,19 +34,13 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
         "you may rely on it.",
     ];
 
-    let response = responses.choose(&mut rand::thread_rng()).unwrap();
+    let response = responses
+        .choose(&mut rand::thread_rng())
+        .unwrap()
+        .to_string();
 
     msg.channel_id
-        .send_files(&ctx.http, vec!["res/DS.gif"], |m| {
-            m.embed(|e| {
-                e.title(question);
-                e.description(prepend_response.to_owned() + response);
-                e.color(0xF6DBD8);
-                e.attachment("DS.gif");
-                e
-            });
-            m
-        })
+        .say(&ctx.http, format!("{} {}", prepend_response, response))
         .await?;
 
     Ok(())

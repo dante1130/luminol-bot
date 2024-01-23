@@ -1,7 +1,11 @@
 use std::collections::HashMap;
 
+use async_openai::config::OpenAIConfig;
 use serenity::{
-    framework::{standard::macros::group, StandardFramework},
+    framework::{
+        standard::{macros::group, Configuration},
+        StandardFramework,
+    },
     model::prelude::UserId,
     prelude::TypeMapKey,
 };
@@ -18,7 +22,7 @@ use commands::{
 pub struct OpenAIClient;
 
 impl TypeMapKey for OpenAIClient {
-    type Value = HashMap<u8, async_openai::Client>;
+    type Value = HashMap<u8, async_openai::Client<OpenAIConfig>>;
 }
 
 pub struct Bagels;
@@ -40,10 +44,13 @@ struct Games;
 struct OpenAI;
 
 pub fn framework() -> StandardFramework {
-    StandardFramework::new()
-        .configure(|c| c.prefix("e!"))
+    let framework = StandardFramework::new()
         .group(&GENERAL_GROUP)
         .group(&GAMES_GROUP)
         .group(&OPENAI_GROUP)
-        .help(&HELP)
+        .help(&HELP);
+
+    framework.configure(Configuration::new().prefix("e!"));
+
+    framework
 }

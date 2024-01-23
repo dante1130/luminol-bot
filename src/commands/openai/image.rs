@@ -1,5 +1,6 @@
 use async_openai::types::{CreateImageRequestArgs, ImageSize, ResponseFormat};
 use serenity::{
+    builder::{CreateAttachment, CreateMessage},
     framework::standard::{macros::command, CommandResult},
     model::prelude::Message,
     prelude::Context,
@@ -30,8 +31,12 @@ pub async fn image(ctx: &Context, msg: &Message) -> CommandResult {
 
     let paths = response.save("./res").await?;
 
+    let attachment = CreateAttachment::path(paths[0].as_path()).await?;
+
+    let builder = CreateMessage::new().content("output image");
+
     msg.channel_id
-        .send_files(&ctx.http, vec![paths[0].as_path()], |m| m)
+        .send_files(&ctx.http, vec![attachment], builder)
         .await?;
 
     std::fs::remove_file(paths[0].as_path())?;
