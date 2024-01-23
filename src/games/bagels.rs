@@ -13,7 +13,6 @@ pub struct BagelsGameState {
     state: BagelsState,
 }
 
-#[derive(Clone)]
 pub struct BagelsResult {
     pub fermi: usize,
     pub pico: usize,

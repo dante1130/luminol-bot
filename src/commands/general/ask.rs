@@ -10,9 +10,9 @@ use serenity::{
 #[description("Ask Ema a question and she will answer it!")]
 #[usage("<question>")]
 pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
-    let prepend_response = "So, to scientically analyze the data available so far, ";
+    const PREPEND_RESPONSE: &str = "So, to scientically analyze the data available so far, ";
 
-    let responses = [
+    const RESPONSES: [&str; 20] = [
         "as I see it, yes.",
         "ask again later.",
         "better not tell you now.",
@@ -37,7 +37,7 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
 
     let question = msg.content.trim_start_matches("e!ask").trim();
 
-    let response = responses
+    let response = RESPONSES
         .choose(&mut rand::thread_rng())
         .unwrap()
         .to_string();
@@ -46,7 +46,7 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
 
     let embed = CreateEmbed::default()
         .title(question)
-        .description(format!("{} {}", prepend_response, response))
+        .description(format!("{} {}", PREPEND_RESPONSE, response))
         .color(0xF6DBD8)
         .attachment(&attachment.filename);
 

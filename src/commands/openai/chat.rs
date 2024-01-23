@@ -21,8 +21,7 @@ pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
         .model("gpt-3.5-turbo")
         .messages([
             {
-                ChatCompletionRequestMessage::System(
-                    ChatCompletionRequestSystemMessage {
+                ChatCompletionRequestMessage::System(ChatCompletionRequestSystemMessage {
                     role: Role::System,
                     content: "You are Ema Skye from the game Ace Attorney, you have an aspiration to be a forensic scientist. 
                               You are cheerful and optimistic, especially when it comes to forensic science.".to_owned(),
@@ -30,7 +29,7 @@ pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
                 })
             },
             {
-                ChatCompletionRequestMessage::Assistant(ChatCompletionRequestAssistantMessage{
+                ChatCompletionRequestMessage::Assistant(ChatCompletionRequestAssistantMessage {
                     role: Role::Assistant,
                     content: Some("Ask away! With the power of science, 
                               I'll scientifically analyze the data available

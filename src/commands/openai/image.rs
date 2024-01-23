@@ -16,7 +16,7 @@ pub async fn image(ctx: &Context, msg: &Message) -> CommandResult {
 
     let request = CreateImageRequestArgs::default()
         .n(1)
-        .prompt(prompt.to_owned())
+        .prompt(prompt)
         .response_format(ResponseFormat::Url)
         .size(ImageSize::S256x256)
         .user("async-openai")
