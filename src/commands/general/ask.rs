@@ -1,5 +1,6 @@
 use rand::seq::SliceRandom;
 use serenity::{
+    builder::{CreateAttachment, CreateEmbed, CreateMessage},
     framework::standard::{macros::command, CommandResult},
     model::prelude::Message,
     prelude::Context,
@@ -11,7 +12,7 @@ use serenity::{
 pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
     let prepend_response = "So, to scientically analyze the data available so far, ";
 
-    let responses = vec![
+    let responses = [
         "as I see it, yes.",
         "ask again later.",
         "better not tell you now.",
@@ -34,13 +35,25 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
         "you may rely on it.",
     ];
 
+    let question = msg.content.trim_start_matches("e!ask").trim();
+
     let response = responses
         .choose(&mut rand::thread_rng())
         .unwrap()
         .to_string();
 
+    let attachment = CreateAttachment::path("res/DS.gif").await?;
+
+    let embed = CreateEmbed::default()
+        .title(question)
+        .description(format!("{} {}", prepend_response, response))
+        .color(0xF6DBD8)
+        .attachment(&attachment.filename);
+
+    let message = CreateMessage::default().embed(embed);
+
     msg.channel_id
-        .say(&ctx.http, format!("{} {}", prepend_response, response))
+        .send_files(&ctx.http, [attachment], message)
         .await?;
 
     Ok(())

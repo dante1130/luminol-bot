@@ -19,7 +19,7 @@ pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
 
     let request = CreateChatCompletionRequestArgs::default()
         .model("gpt-3.5-turbo")
-        .messages(vec![
+        .messages([
             {
                 ChatCompletionRequestMessage::System(
                     ChatCompletionRequestSystemMessage {

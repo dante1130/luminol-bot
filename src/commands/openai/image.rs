@@ -33,10 +33,8 @@ pub async fn image(ctx: &Context, msg: &Message) -> CommandResult {
 
     let attachment = CreateAttachment::path(paths[0].as_path()).await?;
 
-    let builder = CreateMessage::new().content("output image");
-
     msg.channel_id
-        .send_files(&ctx.http, vec![attachment], builder)
+        .send_files(&ctx.http, [attachment], CreateMessage::default())
         .await?;
 
     std::fs::remove_file(paths[0].as_path())?;
