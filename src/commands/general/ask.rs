@@ -5,7 +5,7 @@ use serenity::builder::{CreateAttachment, CreateEmbed, CreateMessage};
 use crate::Context;
 use crate::Error;
 
-#[poise::command(slash_command, prefix_command)]
+#[poise::command(slash_command, prefix_command, category = "General")]
 pub async fn ask(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
     const PREPEND_RESPONSE: &str = "So, to scientically analyze the data available so far, ";
 
