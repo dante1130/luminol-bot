@@ -5,7 +5,7 @@ use async_openai::config::OpenAIConfig;
 use commands::{
     general::{ask::ask, ping::ping},
     help::help,
-    openai::image::image,
+    openai::{chat::chat, image::image},
 };
 
 pub struct Data {
@@ -30,7 +30,7 @@ pub fn framework(
                 prefix: Some("e!".to_string()),
                 ..Default::default()
             },
-            commands: vec![ping(), ask(), image(), register(), help()],
+            commands: vec![ping(), ask(), image(), chat(), register(), help()],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {

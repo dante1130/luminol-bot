@@ -1,74 +1,62 @@
 use async_openai::types::{
-    ChatCompletionRequestAssistantMessage, ChatCompletionRequestMessage,
-    ChatCompletionRequestSystemMessage, ChatCompletionRequestUserMessage,
-    ChatCompletionRequestUserMessageContent, CreateChatCompletionRequestArgs, Role,
-};
-use serenity::{
-    framework::standard::{macros::command, CommandResult},
-    model::prelude::Message,
-    prelude::Context,
+    ChatCompletionRequestAssistantMessage, ChatCompletionRequestAssistantMessageContent,
+    ChatCompletionRequestMessage, ChatCompletionRequestSystemMessage,
+    ChatCompletionRequestSystemMessageContent, ChatCompletionRequestUserMessage,
+    ChatCompletionRequestUserMessageContent, CreateChatCompletionRequestArgs,
 };
 
-use crate::OpenAIClient;
+use crate::{Context, Error};
 
-#[command]
-#[description("Chat with OpenAI's GPT-3.5 API.")]
-#[usage("<prompt>")]
-pub async fn chat(ctx: &Context, msg: &Message) -> CommandResult {
-    let prompt = msg.content.trim_start_matches("e!chat").trim();
+#[poise::command(slash_command, prefix_command, category = "OpenAI")]
+pub async fn chat(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
+    const MAX_WORD_COUNT: u16 = 32;
+    const MAX_TOKENS: u16 = 64;
 
     let request = CreateChatCompletionRequestArgs::default()
-        .model("gpt-3.5-turbo")
+        .model("gpt-4o")
         .messages([
             {
                 ChatCompletionRequestMessage::System(ChatCompletionRequestSystemMessage {
-                    role: Role::System,
-                    content: "You are Ema Skye from the game Ace Attorney, you have an aspiration to be a forensic scientist. 
-                              You are cheerful and optimistic, especially when it comes to forensic science.".to_owned(),
+                    content: ChatCompletionRequestSystemMessageContent::Text(format!("You are Ema Skye from the game Ace Attorney, you have an aspiration to be a forensic scientist. 
+                              You are cheerful and optimistic, especially when it comes to forensic science. Keep your sentences nice and brief, around {} words.", MAX_WORD_COUNT)),
                     name: None,
                 })
             },
             {
                 ChatCompletionRequestMessage::Assistant(ChatCompletionRequestAssistantMessage {
-                    role: Role::Assistant,
-                    content: Some("Ask away! With the power of science, 
+                    content: Some(ChatCompletionRequestAssistantMessageContent::Text("Ask away! With the power of science, 
                               I'll scientifically analyze the data available
-                              and use my scientific gadgets to solve your problems.".to_owned()),
+                              and use my scientific gadgets to solve your problems.".to_owned())),
                     name: Some("Ema_Skye".to_owned()),
-                    tool_calls: None,
-                    function_call: None,
+                    ..Default::default()
                 })
             },
             {
                 ChatCompletionRequestMessage::User(ChatCompletionRequestUserMessage {
-                    role: Role::User,
-                    content: ChatCompletionRequestUserMessageContent::Text(prompt.to_owned()),
-                    name: Some(msg.author.name.to_owned().replace(' ', "_")),
+                    content: ChatCompletionRequestUserMessageContent::Text(arg),
+                    name: Some(ctx.author().name.to_owned().replace(' ', "_")),
                 })
             },
         ])
-        .max_tokens(128_u16)
-        .build()
-        .unwrap();
+        .max_tokens(MAX_TOKENS)
+        .n(1)
+        .build()?;
 
-    let data = ctx.data.read().await;
+    let data = ctx.data();
 
-    let client = data.get::<OpenAIClient>().unwrap().get(&0).unwrap();
+    let response = data.openai_client.chat().create(request).await?;
 
-    let response = client.chat().create(request).await.unwrap();
-
-    msg.channel_id
+    ctx.channel_id()
         .say(
-            &ctx.http,
+            &ctx.http(),
             &response
                 .choices
                 .first()
                 .unwrap()
                 .message
                 .content
-                .as_ref()
-                .unwrap()
-                .to_string(),
+                .clone()
+                .unwrap(),
         )
         .await?;
 
