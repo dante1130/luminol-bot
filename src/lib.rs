@@ -1,45 +1,36 @@
-use std::collections::HashMap;
-
-use async_openai::config::OpenAIConfig;
-use serenity::{
-    framework::{
-        standard::{macros::group, Configuration},
-        StandardFramework,
-    },
-    model::prelude::UserId,
-    prelude::TypeMapKey,
-};
-
 pub mod commands;
-pub mod games;
 pub mod handler;
 
-use commands::{
-    general::ask::*, general::ping::*, help::*, openai::chat::*, openai::complete::*,
-    openai::image::*,
-};
+use commands::general::ping::*;
 
-pub struct OpenAIClient;
+pub struct Data {}
 
-impl TypeMapKey for OpenAIClient {
-    type Value = HashMap<u8, async_openai::Client<OpenAIConfig>>;
+pub type Error = Box<dyn std::error::Error + Send + Sync>;
+pub type Context<'a> = poise::Context<'a, Data, Error>;
+
+#[poise::command(prefix_command)]
+pub async fn register(ctx: Context<'_>) -> Result<(), Error> {
+    poise::builtins::register_application_commands_buttons(ctx).await?;
+    Ok(())
 }
 
-#[group]
-#[commands(ping, ask)]
-struct General;
-
-#[group]
-#[commands(complete, chat, image)]
-struct OpenAI;
-
-pub fn framework() -> StandardFramework {
-    let framework = StandardFramework::new()
-        .group(&GENERAL_GROUP)
-        .group(&OPENAI_GROUP)
-        .help(&HELP);
-
-    framework.configure(Configuration::new().prefix("e!"));
+pub fn framework() -> poise::Framework<Data, Error> {
+    let framework = poise::Framework::builder()
+        .options(poise::FrameworkOptions {
+            prefix_options: poise::PrefixFrameworkOptions {
+                prefix: Some("e!".to_string()),
+                ..Default::default()
+            },
+            commands: vec![ping(), register()],
+            ..Default::default()
+        })
+        .setup(|ctx, _ready, framework| {
+            Box::pin(async move {
+                poise::builtins::register_globally(ctx, &framework.options().commands).await?;
+                Ok(Data {})
+            })
+        })
+        .build();
 
     framework
 }
