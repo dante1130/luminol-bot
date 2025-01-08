@@ -1,15 +1,12 @@
 use rand::seq::SliceRandom;
-use serenity::{
-    builder::{CreateAttachment, CreateEmbed, CreateMessage},
-    framework::standard::{macros::command, CommandResult},
-    model::prelude::Message,
-    prelude::Context,
-};
 
-#[command]
-#[description("Ask Ema a question and she will answer it!")]
-#[usage("<question>")]
-pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
+use serenity::builder::{CreateAttachment, CreateEmbed, CreateMessage};
+
+use crate::Context;
+use crate::Error;
+
+#[poise::command(slash_command, prefix_command)]
+pub async fn ask(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
     const PREPEND_RESPONSE: &str = "So, to scientically analyze the data available so far, ";
 
     const RESPONSES: [&str; 20] = [
@@ -35,8 +32,6 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
         "you may rely on it.",
     ];
 
-    let question = msg.content.trim_start_matches("e!ask").trim();
-
     let response = RESPONSES
         .choose(&mut rand::thread_rng())
         .unwrap()
@@ -45,15 +40,15 @@ pub async fn ask(ctx: &Context, msg: &Message) -> CommandResult {
     let attachment = CreateAttachment::path("res/DS.gif").await?;
 
     let embed = CreateEmbed::default()
-        .title(question)
+        .title(arg)
         .description(format!("{} {}", PREPEND_RESPONSE, response))
         .color(0xF6DBD8)
         .attachment(&attachment.filename);
 
     let message = CreateMessage::default().embed(embed);
 
-    msg.channel_id
-        .send_files(&ctx.http, [attachment], message)
+    ctx.channel_id()
+        .send_files(&ctx.http(), [attachment], message)
         .await?;
 
     Ok(())

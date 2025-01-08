@@ -1,7 +1,7 @@
 pub mod commands;
 pub mod handler;
 
-use commands::general::ping::*;
+use commands::general::{ask::*, ping::*};
 
 pub struct Data {}
 
@@ -21,7 +21,7 @@ pub fn framework() -> poise::Framework<Data, Error> {
                 prefix: Some("e!".to_string()),
                 ..Default::default()
             },
-            commands: vec![ping(), register()],
+            commands: vec![ping(), ask(), register()],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
