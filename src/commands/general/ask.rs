@@ -1,6 +1,6 @@
 use rand::seq::SliceRandom;
 
-use serenity::builder::{CreateAttachment, CreateEmbed, CreateMessage};
+use serenity::builder::{CreateEmbed, CreateMessage};
 
 use crate::Context;
 use crate::Error;
