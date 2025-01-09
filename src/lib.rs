@@ -5,7 +5,7 @@ use std::collections::{HashMap, VecDeque};
 
 use async_openai::config::OpenAIConfig;
 use commands::{
-    general::{ask::ask, ping::ping},
+    general::{ask::ask, ping::ping, remind::remind},
     help::help,
     openai::{chat::chat, image::image, memorise::memorise, vision::vision},
 };
@@ -38,6 +38,7 @@ pub fn framework(
             commands: vec![
                 ping(),
                 ask(),
+                remind(),
                 image(),
                 chat(),
                 vision(),
