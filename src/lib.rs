@@ -7,9 +7,11 @@ use commands::{
     help::help,
     openai::{chat::chat, image::image},
 };
+use serenity::all::CreateAttachment;
 
 pub struct Data {
     pub openai_client: async_openai::Client<OpenAIConfig>,
+    pub ds_gif: CreateAttachment,
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -36,7 +38,13 @@ pub fn framework(
         .setup(|ctx, _ready, framework| {
             Box::pin(async move {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
-                Ok(Data { openai_client })
+
+                let ds_gif = CreateAttachment::bytes(include_bytes!("../res/DS.gif"), "DS.gif");
+
+                Ok(Data {
+                    openai_client,
+                    ds_gif,
+                })
             })
         })
         .build();

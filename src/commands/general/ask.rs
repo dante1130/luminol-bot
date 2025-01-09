@@ -32,23 +32,20 @@ pub async fn ask(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
         "you may rely on it.",
     ];
 
-    let response = RESPONSES
-        .choose(&mut rand::thread_rng())
-        .unwrap()
-        .to_string();
+    let response = RESPONSES.choose(&mut rand::thread_rng()).unwrap();
 
-    let attachment = CreateAttachment::path("res/DS.gif").await?;
+    let ds_gif = &ctx.data().ds_gif;
 
     let embed = CreateEmbed::default()
         .title(arg)
         .description(format!("{} {}", PREPEND_RESPONSE, response))
         .color(0xF6DBD8)
-        .attachment(&attachment.filename);
+        .attachment(&ds_gif.filename);
 
     let message = CreateMessage::default().embed(embed);
 
     ctx.channel_id()
-        .send_files(&ctx.http(), [attachment], message)
+        .send_files(&ctx.http(), [ds_gif.clone()], message)
         .await?;
 
     Ok(())
