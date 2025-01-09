@@ -5,8 +5,7 @@ use std::collections::{HashMap, VecDeque};
 
 use async_openai::config::OpenAIConfig;
 use commands::{
-    general::{ask::ask, ping::ping, remind::remind},
-    help::help,
+    general::{ask::ask, help::help, ping::ping, remind::remind},
     openai::{chat::chat, image::image, memorise::memorise, vision::vision},
 };
 use serenity::{all::CreateAttachment, futures::lock::Mutex};
