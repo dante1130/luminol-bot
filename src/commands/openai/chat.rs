@@ -18,7 +18,7 @@ pub async fn chat(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
             {
                 ChatCompletionRequestMessage::System(ChatCompletionRequestSystemMessage {
                     content: ChatCompletionRequestSystemMessageContent::Text(
-                        data.chat_prompt.clone(),
+                        data.chat_prompt.to_string(),
                     ),
                     name: None,
                 })

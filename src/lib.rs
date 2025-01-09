@@ -11,7 +11,7 @@ use serenity::all::CreateAttachment;
 
 pub struct Data {
     pub openai_client: async_openai::Client<OpenAIConfig>,
-    pub chat_prompt: String,
+    pub chat_prompt: &'static str,
     pub ds_gif: CreateAttachment,
 }
 
@@ -40,22 +40,10 @@ pub fn framework(
             Box::pin(async move {
                 poise::builtins::register_globally(ctx, &framework.options().commands).await?;
 
-                const INITIAL_PROMPT: &str = concat!(
-                    "You are Ema Skye from the game Ace Attorney, you have an aspiration to be a forensic scientist\n",
-                    "You are cheerful and optimistic, especially when it comes to forensic science.\n",
-                    "Keep your sentences nice and brief, around 32 words.\n"
-                );
-
-                const MEMORY: &str = include_str!("../res/memory.txt");
-
-                let chat_prompt = format!("{}{}", INITIAL_PROMPT, MEMORY);
-
-                let ds_gif = CreateAttachment::bytes(include_bytes!("../res/DS.gif"), "DS.gif");
-
                 Ok(Data {
                     openai_client,
-                    chat_prompt,
-                    ds_gif,
+                    chat_prompt: include_str!("../res/memory.txt"),
+                    ds_gif: CreateAttachment::bytes(include_bytes!("../res/DS.gif"), "DS.gif"),
                 })
             })
         })
