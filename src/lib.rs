@@ -1,18 +1,20 @@
 pub mod commands;
 pub mod handler;
 
+use std::collections::{HashMap, VecDeque};
+
 use async_openai::config::OpenAIConfig;
 use commands::{
     general::{ask::ask, ping::ping},
     help::help,
-    openai::{chat::chat, image::image, vision::vision},
+    openai::{chat::chat, image::image, memorise::memorise, vision::vision},
 };
-use serenity::all::CreateAttachment;
+use serenity::{all::CreateAttachment, futures::lock::Mutex};
 
 pub struct Data {
     pub openai_client: async_openai::Client<OpenAIConfig>,
-    pub chat_prompt: &'static str,
     pub ds_gif: CreateAttachment,
+    pub memory_map: Mutex<HashMap<u64, VecDeque<String>>>,
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -33,7 +35,16 @@ pub fn framework(
                 prefix: Some("e!".to_string()),
                 ..Default::default()
             },
-            commands: vec![ping(), ask(), image(), chat(), vision(), register(), help()],
+            commands: vec![
+                ping(),
+                ask(),
+                image(),
+                chat(),
+                vision(),
+                memorise(),
+                register(),
+                help(),
+            ],
             ..Default::default()
         })
         .setup(|ctx, _ready, framework| {
@@ -42,8 +53,8 @@ pub fn framework(
 
                 Ok(Data {
                     openai_client,
-                    chat_prompt: include_str!("../res/memory.txt"),
                     ds_gif: CreateAttachment::bytes(include_bytes!("../res/DS.gif"), "DS.gif"),
+                    memory_map: HashMap::new().into(),
                 })
             })
         })
