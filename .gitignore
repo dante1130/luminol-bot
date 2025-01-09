@@ -11,3 +11,6 @@ Secrets.toml
 **/*.rs.bk
 
 *.pdb
+/target
+.shuttle*
+Secrets*.toml
