@@ -5,6 +5,7 @@ use std::collections::{HashMap, VecDeque};
 
 use async_openai::config::OpenAIConfig;
 use commands::{
+    audio::{join::join, leave::leave, play::play},
     general::{ask::ask, help::help, ping::ping, remind::remind},
     openai::{chat::chat, image::image, memorise::memorise, vision::vision},
 };
@@ -14,6 +15,7 @@ pub struct Data {
     pub openai_client: async_openai::Client<OpenAIConfig>,
     pub ds_gif: CreateAttachment,
     pub memory_map: Mutex<HashMap<u64, VecDeque<String>>>,
+    pub http_client: reqwest::Client,
 }
 
 pub type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -31,10 +33,13 @@ pub fn framework(
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             prefix_options: poise::PrefixFrameworkOptions {
-                prefix: Some("e!".to_string()),
+                prefix: Some("!".to_string()),
                 ..Default::default()
             },
             commands: vec![
+                play(),
+                join(),
+                leave(),
                 ping(),
                 ask(),
                 remind(),
@@ -55,6 +60,7 @@ pub fn framework(
                     openai_client,
                     ds_gif: CreateAttachment::bytes(include_bytes!("../res/DS.gif"), "DS.gif"),
                     memory_map: HashMap::new().into(),
+                    http_client: reqwest::Client::new(),
                 })
             })
         })

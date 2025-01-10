@@ -4,6 +4,7 @@ use async_openai::config::OpenAIConfig;
 use shuttle_runtime::SecretStore;
 
 use serenity::prelude::*;
+use songbird::SerenityInit;
 
 #[shuttle_runtime::main]
 async fn serenity(
@@ -27,11 +28,14 @@ async fn serenity(
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
-        | GatewayIntents::MESSAGE_CONTENT;
+        | GatewayIntents::MESSAGE_CONTENT
+        | GatewayIntents::GUILDS
+        | GatewayIntents::GUILD_VOICE_STATES;
 
     let client = serenity::client::Client::builder(&discord_token, intents)
         .event_handler(luminol_bot::handler::Handler)
         .framework(luminol_bot::framework(openai_client))
+        .register_songbird()
         .await
         .expect("Err creating client");
 
