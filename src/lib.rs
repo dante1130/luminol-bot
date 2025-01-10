@@ -5,7 +5,7 @@ use std::collections::{HashMap, VecDeque};
 
 use async_openai::config::OpenAIConfig;
 use commands::{
-    audio::{join::join, leave::leave, play::play},
+    audio::{join::join, leave::leave, play::play, skip::skip, stop::stop},
     general::{ask::ask, help::help, ping::ping, remind::remind},
     openai::{chat::chat, image::image, memorise::memorise, vision::vision},
 };
@@ -40,6 +40,8 @@ pub fn framework(
                 play(),
                 join(),
                 leave(),
+                skip(),
+                stop(),
                 ping(),
                 ask(),
                 remind(),
