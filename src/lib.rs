@@ -33,7 +33,7 @@ pub fn framework(
     let framework = poise::Framework::builder()
         .options(poise::FrameworkOptions {
             prefix_options: poise::PrefixFrameworkOptions {
-                prefix: Some("!".to_string()),
+                prefix: Some("e!".to_string()),
                 ..Default::default()
             },
             commands: vec![
