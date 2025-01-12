@@ -25,6 +25,13 @@ pub async fn chat(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
         CHAT_PROMPT.to_string()
     };
 
+    let author = ctx
+        .author()
+        .name
+        .chars()
+        .filter(|c| c.is_alphabetic())
+        .collect::<String>();
+
     let request = CreateChatCompletionRequestArgs::default()
         .model("gpt-4o-mini")
         .messages([
@@ -37,7 +44,7 @@ pub async fn chat(ctx: Context<'_>, #[rest] arg: String) -> Result<(), Error> {
             {
                 ChatCompletionRequestMessage::User(ChatCompletionRequestUserMessage {
                     content: ChatCompletionRequestUserMessageContent::Text(arg),
-                    name: Some(ctx.author().name.to_owned().replace(' ', "_")),
+                    name: Some(author),
                 })
             },
         ])

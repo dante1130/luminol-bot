@@ -15,11 +15,14 @@ pub async fn memorise(ctx: Context<'_>, messages_to_memorise_count: Option<u8>) 
     const MAX_TOKENS: u16 = 64;
     const MAX_MEMORY_SIZE: usize = 50;
     const CHAT_PROMPT: &'static str = 
-    "Please summarize the conversation in one sentence so that it can be used as a memory for the next conversation.";
+    "Please summarize the conversation in one sentence so that it can be used as a memory for the next conversation. Don't start with 'The conversation involved' or anything similar.";
 
-    let messages = ctx.channel_id().messages(&ctx.http(), GetMessages::new().limit(messages_to_memorise_count.unwrap_or(50))).await?;
+    // Adding 1 to the count to account for the command message itself.
+    let count = messages_to_memorise_count.unwrap_or(50) + 1;
+
+    let messages = ctx.channel_id().messages(&ctx.http(), GetMessages::new().limit(count)).await?;
     
-    let formatted_messages = messages.iter().map(|message| {
+    let formatted_messages = messages.iter().skip(1).map(|message| {
         format!("{}: {}", message.author.name, message.content)
     }).collect::<Vec<String>>().join("\n");
 
@@ -62,7 +65,6 @@ pub async fn memorise(ctx: Context<'_>, messages_to_memorise_count: Option<u8>) 
         }
     } else {
         memory_map.insert(ctx.channel_id().get(), VecDeque::from([response_content.clone()]));
-
     }
 
     drop(memory_map);
